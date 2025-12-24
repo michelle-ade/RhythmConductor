@@ -20,5 +20,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+		//global variables set up
+		//set up sound
+		ofSoundPlayer beatSound;
+		ofSoundPlayer nocturne;
+
+		bool fDown;
 };
