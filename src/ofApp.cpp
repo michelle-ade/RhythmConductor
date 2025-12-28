@@ -7,8 +7,14 @@ void ofApp::setup(){
     beatSound.load("beat.mp3");
     beatSound.setMultiPlay(true);
 
+    snareSound.load("snare.mp3");
+    beatSound.setMultiPlay(true);
+
     nocturne.load("nocturne.mp3");
     nocturne.setMultiPlay(false);
+
+    beatHit = false;
+    snareHit = false;
     
     ofDrawBitmapString("Press SPACE to play Nocturne", 200, 100);
 }
@@ -18,37 +24,51 @@ void ofApp::update(){
     //Get Playhead Pos for timing
     int currentMS = nocturne.getPositionMS();
 
-    //Get Bounds
-    int earlyLowerBound = beatMS[beatIndex] - 101;
-    int earlyUpperBound = beatMS[beatIndex] - 50;
+    //Get Beat Bounds
+    int earlyLowerBoundB = beatMS[beatIndex] - 101;
+    int earlyUpperBoundB = beatMS[beatIndex] - 50;
 
-    int perfectLowerBound = beatMS[beatIndex] - 51;
-    int perfectUpperBound = beatMS[beatIndex] + 51;
+    int perfectLowerBoundB = beatMS[beatIndex] - 51;
+    int perfectUpperBoundB = beatMS[beatIndex] + 51;
 
-    int lateLowerBound = beatMS[beatIndex] + 50;
-    int lateUpperBound = beatMS[beatIndex] + 101;
+    int lateLowerBoundB = beatMS[beatIndex] + 50;
+    int lateUpperBoundB = beatMS[beatIndex] + 101;
 
-    //Check Beat
+    //Get Snare Bounds
+    int earlyLowerBoundS = snareMS[snareIndex] - 101;
+    int earlyUpperBoundS = snareMS[snareIndex] - 50;
 
-    //Early
-    if (currentMS > earlyLowerBound && currentMS < earlyUpperBound) {
-        testRate = EARLY;
-    } 
-    //Perfect
-    else if (currentMS > perfectLowerBound && currentMS < perfectUpperBound) {
-        testRate = PERFECT;
-    } 
-    //Late
-    else if (currentMS > lateLowerBound && currentMS < lateUpperBound) {
-        testRate = LATE;
-    }
-    //Miss
-    else {
-        testRate = MISS;
-    }
+    int perfectLowerBoundS = snareMS[snareIndex] - 51;
+    int perfectUpperBoundS = snareMS[snareIndex] + 51;
 
-    if (currentMS >= lateUpperBound + 1) {
+    int lateLowerBoundS = snareMS[snareIndex] + 50;
+    int lateUpperBoundS = snareMS[snareIndex] + 101;
+
+    //Move to next beat
+    if (currentMS >= lateUpperBoundB + 1) {
+        //Player Completely missed
+        if (!beatHit) {
+            //set rating for current beat to miss
+        }
+        else {
+            beatHit = false;
+        }
+
         beatIndex++;
+        beatRating = " ";
+    }
+
+    if (currentMS >= lateUpperBoundS + 1) {
+        //Player Completely missed
+        if (!snareHit) {
+            //set rating for current snare to miss
+        }
+        else {
+            snareHit = false;
+        }
+
+        snareIndex++;
+        snareRating = " ";
     }
 }
 
@@ -62,31 +82,45 @@ void ofApp::draw(){
     string musicPos = "Track Time: " + ofToString(nocturne.getPositionMS(), 2);
     ofDrawBitmapString(musicPos, 50, 75);
 
-    string enumString;
-    //Convert Enum to String
-    if (testRate = EARLY) {
-        enumString = "Early...";
-    }
-    else if (testRate = PERFECT) {
-        enumString = "Perfecto!";
-    }
-    else if (testRate = LATE) {
-        enumString = "Late...";
-    }
-    else {
-        enumString = "Missed!!!";
-    }
+    string beatRateString = "Beat Rating: " + beatRating + "!";
+    ofDrawBitmapString(beatRateString, 50, 200);
 
-    string testRateString = "Beat Rating: " + enumString + "!";
-    ofDrawBitmapString(testRateString, 50, 200);
+    string snareRateString = "Snare Rating: " + snareRating + "!";
+    ofDrawBitmapString(snareRateString, 50, 225);
 
     if (fDown) {
         ofDrawBitmapString("BEAT", 300, 300);
+    }
+    if (jDown) {
+        ofDrawBitmapString("SNARE", 400, 400);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    //Get Playhead Pos for timing
+    int currentMS = nocturne.getPositionMS();
+
+    //Get Beat Bounds
+    int earlyLowerBoundB = beatMS[beatIndex] - 101; //533
+    int earlyUpperBoundB = beatMS[beatIndex] - 50; //582
+
+    int perfectLowerBoundB = beatMS[beatIndex] - 51; //583
+    int perfectUpperBoundB = beatMS[beatIndex] + 51; //683
+
+    int lateLowerBoundB = beatMS[beatIndex] + 50; //684
+    int lateUpperBoundB = beatMS[beatIndex] + 101; //733
+
+    //Get Snare Bounds
+    int earlyLowerBoundS = snareMS[snareIndex] - 101;
+    int earlyUpperBoundS = snareMS[snareIndex] - 50;
+
+    int perfectLowerBoundS = snareMS[snareIndex] - 51;
+    int perfectUpperBoundS = snareMS[snareIndex] + 51;
+
+    int lateLowerBoundS = snareMS[snareIndex] + 50;
+    int lateUpperBoundS = snareMS[snareIndex] + 101;
+    
     if (key == ' ') {
         //Play Music
         nocturne.play();
@@ -96,6 +130,83 @@ void ofApp::keyPressed(int key){
         //Play Beat Sound
         beatSound.play();
         fDown = true;
+
+        //Check Beat Timing
+     
+        // First Check the currentMS is even close enough to the beat to count
+        if (currentMS > earlyLowerBoundB) {
+
+            //Early
+            if (currentMS > earlyLowerBoundB && currentMS < earlyUpperBoundB) {
+                //testRate = EARLY;
+                beatRating = "early";
+                beatHit = true;
+            }
+            //Perfect
+            else if (currentMS > perfectLowerBoundB && currentMS < perfectUpperBoundB) {
+                //testRate = PERFECT;
+                beatRating = "perfect";
+                beatHit = true;
+            }
+            //Late
+            else if (currentMS > lateLowerBoundB && currentMS < lateUpperBoundB) {
+                //testRate = LATE;
+                beatRating = "late";
+                beatHit = true;
+            }
+            //Miss
+            else {
+                //testRate = MISS;
+                beatRating = "miss";
+                beatHit = true;
+            }
+        } 
+        else {
+            //too soon to consider this note. do nothing
+            beatRating = " ";
+        }
+    }
+
+    if (key == 'j') {
+        //Play Snare Sound
+        snareSound.play();
+        jDown = true;
+
+        //Check Snare Timing
+
+        // First Check the currentMS is even close enough to the snare to count
+        if (currentMS > earlyLowerBoundS) {
+
+            //Early
+            if (currentMS > earlyLowerBoundS && currentMS < earlyUpperBoundS) {
+                //testRate = EARLY;
+                snareRating = "early";
+                snareHit = true;
+            }
+            //Perfect
+            else if (currentMS > perfectLowerBoundS && currentMS < perfectUpperBoundS) {
+                //testRate = PERFECT;
+                snareRating = "perfect";
+                snareHit = true;
+            }
+            //Late
+            else if (currentMS > lateLowerBoundS && currentMS < lateUpperBoundS) {
+                //testRate = LATE;
+                snareRating = "late";
+                snareHit = true;
+            }
+            //Miss
+            else {
+                //testRate = MISS;
+                snareRating = "miss";
+                snareHit = true;
+            }
+        }
+        else {
+            //too soon to consider this note. do nothing
+            snareRating = " ";
+        }
+
     }
 }
 
@@ -103,6 +214,10 @@ void ofApp::keyPressed(int key){
 void ofApp::keyReleased(int key){
     if (key == 'f') {
         fDown = false;
+    }
+
+    if (key == 'j') {
+        jDown = false;
     }
 }
 

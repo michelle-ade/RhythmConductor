@@ -24,9 +24,11 @@ class ofApp : public ofBaseApp{
 		//global variables set up
 		//set up sound
 		ofSoundPlayer beatSound;
+		ofSoundPlayer snareSound;
 		ofSoundPlayer nocturne;
 
 		bool fDown;
+		bool jDown;
 
 		//arrays of correct milliseconds for beat and snare
 		int beatMS[21] = { 633, 1533, 4700, 6733, 8766, 
@@ -47,8 +49,15 @@ class ofApp : public ofBaseApp{
 			EARLY, //-100ms to -50ms
 			PERFECT, //within 50ms
 			LATE, //+50ms to +100ms
-			MISS //anything else
+			MISS, //anything else
+			DEBUG
 		};
 
-		hitRating testRate;
+		hitRating testRate = DEBUG;
+		string beatRating = "No Rating Yet";
+		string snareRating = "No Rating Yet";
+		bool beatHit;
+		bool snareHit;
+		int beatHitTime;
+		int snareHitTime;
 };
