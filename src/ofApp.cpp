@@ -16,7 +16,40 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     //Get Playhead Pos for timing
-    nocturne.getPositionMS();
+    int currentMS = nocturne.getPositionMS();
+
+    //Get Bounds
+    int earlyLowerBound = beatMS[beatIndex] - 101;
+    int earlyUpperBound = beatMS[beatIndex] - 50;
+
+    int perfectLowerBound = beatMS[beatIndex] - 51;
+    int perfectUpperBound = beatMS[beatIndex] + 51;
+
+    int lateLowerBound = beatMS[beatIndex] + 50;
+    int lateUpperBound = beatMS[beatIndex] + 101;
+
+    //Check Beat
+
+    //Early
+    if (currentMS > earlyLowerBound && currentMS < earlyUpperBound) {
+        testRate = EARLY;
+    } 
+    //Perfect
+    else if (currentMS > perfectLowerBound && currentMS < perfectUpperBound) {
+        testRate = PERFECT;
+    } 
+    //Late
+    else if (currentMS > lateLowerBound && currentMS < lateUpperBound) {
+        testRate = LATE;
+    }
+    //Miss
+    else {
+        testRate = MISS;
+    }
+
+    if (currentMS >= lateUpperBound + 1) {
+        beatIndex++;
+    }
 }
 
 //--------------------------------------------------------------
@@ -28,6 +61,24 @@ void ofApp::draw(){
 
     string musicPos = "Track Time: " + ofToString(nocturne.getPositionMS(), 2);
     ofDrawBitmapString(musicPos, 50, 75);
+
+    string enumString;
+    //Convert Enum to String
+    if (testRate = EARLY) {
+        enumString = "Early...";
+    }
+    else if (testRate = PERFECT) {
+        enumString = "Perfecto!";
+    }
+    else if (testRate = LATE) {
+        enumString = "Late...";
+    }
+    else {
+        enumString = "Missed!!!";
+    }
+
+    string testRateString = "Beat Rating: " + enumString + "!";
+    ofDrawBitmapString(testRateString, 50, 200);
 
     if (fDown) {
         ofDrawBitmapString("BEAT", 300, 300);
