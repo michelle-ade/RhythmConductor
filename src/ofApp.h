@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp{
 
 		bool fDown;
 		bool jDown;
+		bool nocturnePlaying = false;
 
 		//arrays of correct milliseconds for beat and snare
 		int beatMS[21] = { 633, 1533, 4700, 6733, 8766, 
@@ -56,8 +57,10 @@ class ofApp : public ofBaseApp{
 		hitRating testRate = DEBUG;
 		string beatRating = "No Rating Yet";
 		string snareRating = "No Rating Yet";
-		bool beatHit;
-		bool snareHit;
-		int beatHitTime;
-		int snareHitTime;
+		bool beatHit = false;
+		bool snareHit = false;
+		int beatDist;
+		int nextBeatDist;
+		int snareDist;
+		int nextSnareDist;
 };

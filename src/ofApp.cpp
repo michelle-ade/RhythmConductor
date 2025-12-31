@@ -12,9 +12,6 @@ void ofApp::setup(){
 
     nocturne.load("nocturne.mp3");
     nocturne.setMultiPlay(false);
-
-    beatHit = false;
-    snareHit = false;
     
     ofDrawBitmapString("Press SPACE to play Nocturne", 200, 100);
 }
@@ -23,26 +20,26 @@ void ofApp::setup(){
 void ofApp::update(){
     //Get Playhead Pos for timing
     int currentMS = nocturne.getPositionMS();
-
+    //+100ms to all
     //Get Beat Bounds
-    int earlyLowerBoundB = beatMS[beatIndex] - 101;
-    int earlyUpperBoundB = beatMS[beatIndex] - 50;
+    int earlyLowerBoundB = beatMS[beatIndex] - 201; //533
+    int earlyUpperBoundB = beatMS[beatIndex] - 100; //582
 
-    int perfectLowerBoundB = beatMS[beatIndex] - 51;
-    int perfectUpperBoundB = beatMS[beatIndex] + 51;
+    int perfectLowerBoundB = beatMS[beatIndex] - 101; //583
+    int perfectUpperBoundB = beatMS[beatIndex] + 101; //683
 
-    int lateLowerBoundB = beatMS[beatIndex] + 50;
-    int lateUpperBoundB = beatMS[beatIndex] + 101;
+    int lateLowerBoundB = beatMS[beatIndex] + 100; //684
+    int lateUpperBoundB = beatMS[beatIndex] + 201; //733
 
     //Get Snare Bounds
-    int earlyLowerBoundS = snareMS[snareIndex] - 101;
-    int earlyUpperBoundS = snareMS[snareIndex] - 50;
+    int earlyLowerBoundS = snareMS[snareIndex] - 201;
+    int earlyUpperBoundS = snareMS[snareIndex] - 100;
 
-    int perfectLowerBoundS = snareMS[snareIndex] - 51;
-    int perfectUpperBoundS = snareMS[snareIndex] + 51;
+    int perfectLowerBoundS = snareMS[snareIndex] - 101;
+    int perfectUpperBoundS = snareMS[snareIndex] + 101;
 
-    int lateLowerBoundS = snareMS[snareIndex] + 50;
-    int lateUpperBoundS = snareMS[snareIndex] + 101;
+    int lateLowerBoundS = snareMS[snareIndex] + 100;
+    int lateUpperBoundS = snareMS[snareIndex] + 201;
 
     //Move to next beat
     if (currentMS >= lateUpperBoundB + 1) {
@@ -74,19 +71,98 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofDrawBitmapString("Press SPACE to play Nocturne. Press F to hit the drum.", 50, 50);
+    //Get Playhead Pos for timing
+    int currentMS = nocturne.getPositionMS();
+
+    ofSetColor(255, 255, 255);
 
     string fpsStr = "FPS: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(fpsStr, 900, 50);
 
-    string musicPos = "Track Time: " + ofToString(nocturne.getPositionMS(), 2);
-    ofDrawBitmapString(musicPos, 50, 75);
+    string musicPos = "Track Time: " + ofToString(currentMS, 2);
+    ofDrawBitmapString(musicPos, 50, 50);
 
     string beatRateString = "Beat Rating: " + beatRating + "!";
-    ofDrawBitmapString(beatRateString, 50, 200);
+    ofDrawBitmapString(beatRateString, 50, 125);
 
     string snareRateString = "Snare Rating: " + snareRating + "!";
-    ofDrawBitmapString(snareRateString, 50, 225);
+    ofDrawBitmapString(snareRateString, 50, 150);
+
+    //draw notes based on currentMS and beat/snareMS[beat/snare index]
+    ofSetColor(255, 0, 0);
+    ofFill();
+    //draw frame. notes move from right to left.
+    ofDrawCircle(50, 100, 5); //top left
+    ofDrawCircle(974, 100, 5); //top right
+    ofDrawCircle(50, 718, 5); //bottom left
+    ofDrawCircle(974, 718, 5); //bottom right
+
+    //X Bounds: 50 - 974 -> translate directly to MS?
+    //Y Bounds: 100 - 718
+
+    if (nocturnePlaying) {
+        //Draw Beat Note
+            beatDist = beatMS[beatIndex] - currentMS;
+            nextBeatDist = beatMS[beatIndex + 1] - currentMS;
+            if (beatDist <= 974) {
+                ofSetColor(0, 0, 255);
+                ofFill();
+                ofDrawCircle(beatDist, 500, 10);
+            }
+
+            if (nextBeatDist <= 974) {
+                ofSetColor(0, 0, 255);
+                ofFill();
+                ofDrawCircle(nextBeatDist, 500, 10);
+            }
+
+            //Draw Snare Note
+            snareDist = snareMS[snareIndex] - currentMS;
+            nextSnareDist = snareMS[snareIndex + 1] - currentMS;
+            if (snareDist <= 974) {
+                ofSetColor(0, 255, 255);
+                ofFill();
+                ofDrawCircle(snareDist, 500, 10);
+            }
+
+            if (nextSnareDist <= 974) {
+                ofSetColor(0, 255, 255);
+                ofFill();
+                ofDrawCircle(nextSnareDist, 500, 10);
+            }
+    }
+    
+
+    //Draw Hit Visual Feedback
+    if (beatHit) {
+        if (beatRating == "early") {
+            ofSetColor(255, 128, 0);
+        }
+        else if (beatRating == "perfect") {
+            ofSetColor(0, 255, 0);
+        }
+        else if (beatRating == "late") {
+            ofSetColor(255, 0, 0);
+        }
+        
+        ofFill();
+        ofDrawRectangle(50, 500, 50, 50);
+    }
+    
+    if (snareHit) {
+        if (snareRating == "early") {
+            ofSetColor(225, 128, 0);
+        }
+        else if (snareRating == "perfect") {
+            ofSetColor(0, 255, 0);
+        }
+        else if (snareRating == "late") {
+            ofSetColor(255, 0, 0);
+        }
+
+        ofFill();
+        ofDrawRectangle(50, 600, 50, 50);
+    }
 
     if (fDown) {
         ofDrawBitmapString("BEAT", 300, 300);
@@ -100,30 +176,32 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     //Get Playhead Pos for timing
     int currentMS = nocturne.getPositionMS();
-
+    //+100ms to all
     //Get Beat Bounds
-    int earlyLowerBoundB = beatMS[beatIndex] - 101; //533
-    int earlyUpperBoundB = beatMS[beatIndex] - 50; //582
+    int earlyLowerBoundB = beatMS[beatIndex] - 201; //533
+    int earlyUpperBoundB = beatMS[beatIndex] - 100; //582
 
-    int perfectLowerBoundB = beatMS[beatIndex] - 51; //583
-    int perfectUpperBoundB = beatMS[beatIndex] + 51; //683
+    int perfectLowerBoundB = beatMS[beatIndex] - 101; //583
+    int perfectUpperBoundB = beatMS[beatIndex] + 101; //683
 
-    int lateLowerBoundB = beatMS[beatIndex] + 50; //684
-    int lateUpperBoundB = beatMS[beatIndex] + 101; //733
+    int lateLowerBoundB = beatMS[beatIndex] + 100; //684
+    int lateUpperBoundB = beatMS[beatIndex] + 201; //733
 
     //Get Snare Bounds
-    int earlyLowerBoundS = snareMS[snareIndex] - 101;
-    int earlyUpperBoundS = snareMS[snareIndex] - 50;
+    int earlyLowerBoundS = snareMS[snareIndex] - 201;
+    int earlyUpperBoundS = snareMS[snareIndex] - 100;
 
-    int perfectLowerBoundS = snareMS[snareIndex] - 51;
-    int perfectUpperBoundS = snareMS[snareIndex] + 51;
+    int perfectLowerBoundS = snareMS[snareIndex] - 101;
+    int perfectUpperBoundS = snareMS[snareIndex] + 101;
 
-    int lateLowerBoundS = snareMS[snareIndex] + 50;
-    int lateUpperBoundS = snareMS[snareIndex] + 101;
+    int lateLowerBoundS = snareMS[snareIndex] + 100;
+    int lateUpperBoundS = snareMS[snareIndex] + 201;
     
     if (key == ' ') {
         //Play Music
         nocturne.play();
+
+        nocturnePlaying = true;
     }
     
     if (key == 'f') {
