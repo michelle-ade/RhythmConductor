@@ -4,6 +4,7 @@
 void ofApp::setup(){
     ofSetBackgroundColor(44, 58, 79);
 
+    //load sounds
     beatSound.load("beat.mp3");
     beatSound.setMultiPlay(true);
 
@@ -12,8 +13,21 @@ void ofApp::setup(){
 
     nocturne.load("nocturne.mp3");
     nocturne.setMultiPlay(false);
-    
-    ofDrawBitmapString("Press SPACE to play Nocturne", 200, 100);
+
+    //load images
+    testimg.load("testimg.png");
+    backgroundImg.load("background.png");
+    trebleImg.load("trebleClef.png");
+    bassImg.load("bassClef.png");
+
+    perfectImg.load("perfect.png");
+    earlyImg.load("early.png");
+    lateImg.load("late.png");
+    missImg.load("miss.png");
+
+    okPerformance.load("ok.png");
+    greatPerformance.load("great.png");
+    badPerformance.load("bad.png");
 }
 
 //--------------------------------------------------------------
@@ -41,6 +55,11 @@ void ofApp::update(){
     int lateLowerBoundS = snareMS[snareIndex] + 50;
     int lateUpperBoundS = snareMS[snareIndex] + 201;
 
+    //Check Performance
+    if (performanceCounter > 5) {
+        performance -= 3;
+        performanceCounter = 0;
+    }
     //how do i make sure these only happen on beat/snare respectively?
     //Move to next beat
     if (currentMS >= lateUpperBoundB + 1) {
@@ -48,6 +67,7 @@ void ofApp::update(){
         if (!beatHit) {
             //set rating for current beat to miss
             beatScore = 0;
+            performanceCounter++;
         }
         else {
             beatHit = false;
@@ -63,6 +83,7 @@ void ofApp::update(){
         if (!snareHit) {
             //set rating for current snare to miss
             snareScore = 0;
+            performanceCounter++;
         }
         else {
             snareHit = false;
@@ -80,6 +101,21 @@ void ofApp::draw(){
     int currentMS = nocturne.getPositionMS();
 
     ofSetColor(255, 255, 255);
+
+    //check performance
+    if (performance > 6) {
+        performanceImg = greatPerformance;
+    }
+    else if (performance > 3) {
+        performanceImg = okPerformance;
+    }
+    else {
+        performanceImg = badPerformance;
+    }
+
+    //draw background first
+    backgroundImg.draw(0, 0);
+    performanceImg.draw(300, 300);
 
     string fpsStr = "FPS: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(fpsStr, 900, 50);
@@ -99,50 +135,112 @@ void ofApp::draw(){
     //draw notes based on currentMS and beat/snareMS[beat/snare index]
     ofSetColor(255, 0, 0);
     ofFill();
+
     //draw frame. notes move from right to left.
-    ofDrawCircle(50, 100, 5); //top left
-    ofDrawCircle(974, 100, 5); //top right
-    ofDrawCircle(50, 718, 5); //bottom left
-    ofDrawCircle(974, 718, 5); //bottom right
+    ofDrawCircle(25, 500, 5); //top left
+    ofDrawCircle(999, 500, 5); //top right
+    ofDrawCircle(25, 743, 5); //bottom left
+    ofDrawCircle(999, 743, 5); //bottom right
 
     //X Bounds: 50 - 974 -> translate directly to MS?
     //Y Bounds: 100 - 718
+    
+    //draw images
+    ofSetColor(0, 0, 0);
+    //testimg.draw(50, 300);
 
-    if (nocturnePlaying) {
-        //Draw Beat Note
-            beatDist = beatMS[beatIndex] - currentMS;
-            nextBeatDist = beatMS[beatIndex + 1] - currentMS;
-            if (beatDist <= 974) {
-                ofSetColor(0, 0, 255);
-                ofFill();
-                ofDrawCircle(beatDist, 500, 10);
-            }
+    //draw stave lines
+    ofSetLineWidth(3);
+    ofDrawLine(25, 575, 999, 575);
+    ofDrawLine(25, 668, 999, 668);
 
-            if (nextBeatDist <= 974) {
-                ofSetColor(0, 0, 255);
-                ofFill();
-                ofDrawCircle(nextBeatDist, 500, 10);
-            }
+    ofSetColor(255, 255, 255);
+    //draw rating
+    if (beatHit) {
+        beatRatingImg.draw(450, 300);
+    }
 
-            //Draw Snare Note
-            snareDist = snareMS[snareIndex] - currentMS;
-            nextSnareDist = snareMS[snareIndex + 1] - currentMS;
-            if (snareDist <= 974) {
-                ofSetColor(0, 255, 255);
-                ofFill();
-                ofDrawCircle(snareDist, 500, 10);
-            }
-
-            if (nextSnareDist <= 974) {
-                ofSetColor(0, 255, 255);
-                ofFill();
-                ofDrawCircle(nextSnareDist, 500, 10);
-            }
+    if (snareHit) {
+        snareRatingImg.draw(450, 350);
     }
     
 
+    if (nocturnePlaying) {
+        //Draw Beat Note
+        if (beatHit) {
+            ofSetColor(0, 0, 0);
+            ofSetLineWidth(3);
+            ofDrawLine(beatHitTime+50, 575, beatHitTime+50, 668);
+        }
+        else {
+            beatDist = beatMS[beatIndex] - currentMS + beatOffset;
+            if (beatDist <= 974 + beatOffset) {
+                ofFill();
+                ofSetColor(0, 0, 0);
+                ofDrawCircle(beatDist, 575, 30);
+
+                ofSetColor(255, 255, 255);
+                ofDrawCircle(beatDist, 575, 20);
+            }
+        }
+
+        nextBeatDist = beatMS[beatIndex + 1] - currentMS + beatOffset;
+        if (nextBeatDist <= 974 + beatOffset) {
+            ofFill();
+            ofSetColor(0, 0, 0);
+            ofDrawCircle(nextBeatDist, 575, 30);
+
+            ofSetColor(255, 255, 255);
+            ofDrawCircle(nextBeatDist, 575, 20);
+        }
+        
+
+        if (snareHit) {
+            ofSetColor(255, 255, 255);
+            ofSetLineWidth(3);
+            ofDrawLine(snareHitTime+beatOffset, 575, snareHitTime+beatOffset, 668);
+        } else {
+            //Draw Snare Note
+            snareDist = snareMS[snareIndex] - currentMS + beatOffset;
+            if (snareDist <= 974 + beatOffset) {
+                ofFill();
+                ofSetColor(255, 255, 255);
+                ofDrawCircle(snareDist, 668, 30);
+
+                ofSetColor(0, 0, 0);
+                ofDrawCircle(snareDist, 668, 20);
+            }
+        }
+
+        nextSnareDist = snareMS[snareIndex + 1] - currentMS + beatOffset;
+        int nextNextSnareDist = snareMS[snareIndex + 2] - currentMS + beatOffset;
+
+        if (nextSnareDist <= 974+beatOffset) {
+            ofFill();
+            ofSetColor(255, 255, 255);
+            ofDrawCircle(nextSnareDist, 668, 30);
+
+            ofSetColor(0, 0, 0);
+            ofDrawCircle(nextSnareDist, 668, 20);
+        }
+
+        if (nextNextSnareDist <= 974 + beatOffset) {
+            ofFill();
+            ofSetColor(255, 255, 255);
+            ofDrawCircle(nextNextSnareDist, 668, 30);
+            
+            ofSetColor(0, 0, 0);
+            ofDrawCircle(nextNextSnareDist, 668, 20);
+        }
+    }
+
+    //Draw Stave Symbols
+    ofSetColor(255, 255, 255);
+    trebleImg.draw(25, 514);
+    bassImg.draw(25, 623);
+    
     //Draw Hit Visual Feedback
-    if (beatHit) {
+    /*if (beatHit) {
         if (beatRating == "early") {
             ofSetColor(255, 128, 0);
         }
@@ -177,7 +275,7 @@ void ofApp::draw(){
     }
     if (jDown) {
         ofDrawBitmapString("SNARE", 400, 400);
-    }
+    }*/
 }
 
 //--------------------------------------------------------------
@@ -228,6 +326,10 @@ void ofApp::keyPressed(int key){
                 beatRating = "early";
                 beatHit = true;
                 beatScore = 25;
+                beatRatingImg = earlyImg;
+                beatHitTime = beatMS[beatIndex] - currentMS;
+                performance += 1;
+                performanceCounter++;
             }
             //Perfect
             else if (currentMS > perfectLowerBoundB && currentMS < perfectUpperBoundB) {
@@ -235,6 +337,10 @@ void ofApp::keyPressed(int key){
                 beatRating = "perfect";
                 beatHit = true;
                 beatScore = 50;
+                beatRatingImg = perfectImg;
+                beatHitTime = beatMS[beatIndex] - currentMS;
+                performance += 2;
+                performanceCounter++;
             }
             //Late
             else if (currentMS > lateLowerBoundB && currentMS < lateUpperBoundB) {
@@ -242,6 +348,10 @@ void ofApp::keyPressed(int key){
                 beatRating = "late";
                 beatHit = true;
                 beatScore = 25;
+                beatRatingImg = lateImg;
+                beatHitTime = beatMS[beatIndex] - currentMS;
+                performance += 1;
+                performanceCounter++;
             }
             //Miss
             else {
@@ -249,6 +359,8 @@ void ofApp::keyPressed(int key){
                 beatRating = "miss";
                 beatHit = true;
                 beatScore = 0;
+                beatRatingImg = missImg;
+                performanceCounter++;
             }
         } 
         else {
@@ -273,6 +385,10 @@ void ofApp::keyPressed(int key){
                 snareRating = "early";
                 snareHit = true;
                 snareScore = 25;
+                snareRatingImg = earlyImg;
+                snareHitTime = snareMS[snareIndex] - currentMS;
+                performance += 1;
+                performanceCounter++;
             }
             //Perfect
             else if (currentMS > perfectLowerBoundS && currentMS < perfectUpperBoundS) {
@@ -280,6 +396,10 @@ void ofApp::keyPressed(int key){
                 snareRating = "perfect";
                 snareHit = true;
                 snareScore = 50;
+                snareRatingImg = perfectImg;
+                snareHitTime = snareMS[snareIndex] - currentMS;
+                performance += 1;
+                performanceCounter++;
             }
             //Late
             else if (currentMS > lateLowerBoundS && currentMS < lateUpperBoundS) {
@@ -287,6 +407,10 @@ void ofApp::keyPressed(int key){
                 snareRating = "late";
                 snareHit = true;
                 snareScore = 25;
+                snareRatingImg = lateImg;
+                snareHitTime = snareMS[snareIndex] - currentMS;
+                performance += 1;
+                performanceCounter++;
             }
             //Miss
             else {
@@ -294,6 +418,8 @@ void ofApp::keyPressed(int key){
                 snareRating = "miss";
                 snareHit = true;
                 snareScore = 0;
+                snareRatingImg = missImg;
+                performanceCounter++;
             }
         }
         else {

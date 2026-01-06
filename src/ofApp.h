@@ -27,6 +27,24 @@ class ofApp : public ofBaseApp{
 		ofSoundPlayer snareSound;
 		ofSoundPlayer nocturne;
 
+		//set up images
+		ofImage testimg;
+		ofImage backgroundImg;
+		ofImage trebleImg;
+		ofImage bassImg;
+
+		ofImage perfectImg;
+		ofImage earlyImg;
+		ofImage lateImg;
+		ofImage missImg;
+		ofImage beatRatingImg;
+		ofImage snareRatingImg;
+
+		ofImage okPerformance;
+		ofImage greatPerformance;
+		ofImage badPerformance;
+		ofImage performanceImg;
+
 		bool fDown;
 		bool jDown;
 		bool nocturnePlaying = false;
@@ -57,13 +75,18 @@ class ofApp : public ofBaseApp{
 		int beatScore;
 		int snareScore;
 		int totalScore = 0;
+		int performanceCounter = 0;
+		int performance = 0; //5-note performance
 		hitRating testRate = DEBUG;
 		string beatRating = "No Rating Yet";
 		string snareRating = "No Rating Yet";
 		bool beatHit = false;
 		bool snareHit = false;
+		int beatHitTime;
+		int snareHitTime;
 		int beatDist;
 		int nextBeatDist;
 		int snareDist;
 		int nextSnareDist;
+		int beatOffset = 50;
 };
