@@ -54,6 +54,9 @@ class ofApp : public ofBaseApp{
 			DEBUG
 		};
 
+		int beatScore;
+		int snareScore;
+		int totalScore = 0;
 		hitRating testRate = DEBUG;
 		string beatRating = "No Rating Yet";
 		string snareRating = "No Rating Yet";

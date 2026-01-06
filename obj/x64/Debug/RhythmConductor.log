@@ -1,5 +1,4 @@
 ﻿  Scanning sources for module dependencies...
-  main.cpp
   ofApp.cpp
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/FORCE' specification
      Creating library bin\RhythmConductor_debug.lib and object bin\RhythmConductor_debug.exp

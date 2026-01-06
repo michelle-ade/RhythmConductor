@@ -23,29 +23,31 @@ void ofApp::update(){
     //+100ms to all
     //Get Beat Bounds
     int earlyLowerBoundB = beatMS[beatIndex] - 201; //533
-    int earlyUpperBoundB = beatMS[beatIndex] - 100; //582
+    int earlyUpperBoundB = beatMS[beatIndex] - 50; //582
 
-    int perfectLowerBoundB = beatMS[beatIndex] - 101; //583
-    int perfectUpperBoundB = beatMS[beatIndex] + 101; //683
+    int perfectLowerBoundB = beatMS[beatIndex] - 51; //583
+    int perfectUpperBoundB = beatMS[beatIndex] + 51; //683
 
-    int lateLowerBoundB = beatMS[beatIndex] + 100; //684
+    int lateLowerBoundB = beatMS[beatIndex] + 50; //684
     int lateUpperBoundB = beatMS[beatIndex] + 201; //733
 
     //Get Snare Bounds
     int earlyLowerBoundS = snareMS[snareIndex] - 201;
-    int earlyUpperBoundS = snareMS[snareIndex] - 100;
+    int earlyUpperBoundS = snareMS[snareIndex] - 50;
 
-    int perfectLowerBoundS = snareMS[snareIndex] - 101;
-    int perfectUpperBoundS = snareMS[snareIndex] + 101;
+    int perfectLowerBoundS = snareMS[snareIndex] - 51;
+    int perfectUpperBoundS = snareMS[snareIndex] + 51;
 
-    int lateLowerBoundS = snareMS[snareIndex] + 100;
+    int lateLowerBoundS = snareMS[snareIndex] + 50;
     int lateUpperBoundS = snareMS[snareIndex] + 201;
 
+    //how do i make sure these only happen on beat/snare respectively?
     //Move to next beat
     if (currentMS >= lateUpperBoundB + 1) {
         //Player Completely missed
         if (!beatHit) {
             //set rating for current beat to miss
+            beatScore = 0;
         }
         else {
             beatHit = false;
@@ -53,12 +55,14 @@ void ofApp::update(){
 
         beatIndex++;
         beatRating = " ";
+        totalScore += beatScore;
     }
 
     if (currentMS >= lateUpperBoundS + 1) {
         //Player Completely missed
         if (!snareHit) {
             //set rating for current snare to miss
+            snareScore = 0;
         }
         else {
             snareHit = false;
@@ -66,6 +70,7 @@ void ofApp::update(){
 
         snareIndex++;
         snareRating = " ";
+        totalScore += snareScore;
     }
 }
 
@@ -81,6 +86,9 @@ void ofApp::draw(){
 
     string musicPos = "Track Time: " + ofToString(currentMS, 2);
     ofDrawBitmapString(musicPos, 50, 50);
+
+    string score = "Total Score: " + ofToString(totalScore, 2);
+    ofDrawBitmapString(score, 50, 75);
 
     string beatRateString = "Beat Rating: " + beatRating + "!";
     ofDrawBitmapString(beatRateString, 50, 125);
@@ -219,24 +227,28 @@ void ofApp::keyPressed(int key){
                 //testRate = EARLY;
                 beatRating = "early";
                 beatHit = true;
+                beatScore = 25;
             }
             //Perfect
             else if (currentMS > perfectLowerBoundB && currentMS < perfectUpperBoundB) {
                 //testRate = PERFECT;
                 beatRating = "perfect";
                 beatHit = true;
+                beatScore = 50;
             }
             //Late
             else if (currentMS > lateLowerBoundB && currentMS < lateUpperBoundB) {
                 //testRate = LATE;
                 beatRating = "late";
                 beatHit = true;
+                beatScore = 25;
             }
             //Miss
             else {
                 //testRate = MISS;
                 beatRating = "miss";
                 beatHit = true;
+                beatScore = 0;
             }
         } 
         else {
@@ -260,24 +272,28 @@ void ofApp::keyPressed(int key){
                 //testRate = EARLY;
                 snareRating = "early";
                 snareHit = true;
+                snareScore = 25;
             }
             //Perfect
             else if (currentMS > perfectLowerBoundS && currentMS < perfectUpperBoundS) {
                 //testRate = PERFECT;
                 snareRating = "perfect";
                 snareHit = true;
+                snareScore = 50;
             }
             //Late
             else if (currentMS > lateLowerBoundS && currentMS < lateUpperBoundS) {
                 //testRate = LATE;
                 snareRating = "late";
                 snareHit = true;
+                snareScore = 25;
             }
             //Miss
             else {
                 //testRate = MISS;
                 snareRating = "miss";
                 snareHit = true;
+                snareScore = 0;
             }
         }
         else {

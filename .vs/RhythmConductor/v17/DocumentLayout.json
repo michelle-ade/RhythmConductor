@@ -21,7 +21,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 228,
+          "DockedWidth": 326,
           "SelectedChildIndex": 0,
           "Children": [
             {
@@ -32,10 +32,29 @@
               "RelativeDocumentMoniker": "src\\ofApp.cpp",
               "ToolTip": "C:\\Users\\shell\\OneDrive\\Documents\\GitHub\\RhythmConductor\\src\\ofApp.cpp",
               "RelativeToolTip": "src\\ofApp.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGwAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACMAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-12-24T15:43:32.147Z",
               "IsPinned": true,
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 130,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ofApp.h",
+              "DocumentMoniker": "C:\\Users\\shell\\OneDrive\\Documents\\GitHub\\RhythmConductor\\src\\ofApp.h",
+              "RelativeDocumentMoniker": "src\\ofApp.h",
+              "ToolTip": "C:\\Users\\shell\\OneDrive\\Documents\\GitHub\\RhythmConductor\\src\\ofApp.h",
+              "RelativeToolTip": "src\\ofApp.h",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAD4AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-24T16:13:56.999Z",
               "EditorCaption": ""
             },
             {
@@ -49,19 +68,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-12-21T20:55:56.049Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ofApp.h",
-              "DocumentMoniker": "C:\\Users\\shell\\OneDrive\\Documents\\GitHub\\RhythmConductor\\src\\ofApp.h",
-              "RelativeDocumentMoniker": "src\\ofApp.h",
-              "ToolTip": "C:\\Users\\shell\\OneDrive\\Documents\\GitHub\\RhythmConductor\\src\\ofApp.h",
-              "RelativeToolTip": "src\\ofApp.h",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAB8AAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-24T16:13:56.999Z",
               "EditorCaption": ""
             }
           ]
