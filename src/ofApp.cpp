@@ -56,8 +56,8 @@ void ofApp::update(){
     int lateUpperBoundS = snareMS[snareIndex] + 201;
 
     //Check Performance
-    if (performanceCounter > 5) {
-        performance -= 3;
+    if (performanceCounter >= 5) {
+        performance -= 2;
         performanceCounter = 0;
     }
     //how do i make sure these only happen on beat/snare respectively?
@@ -103,7 +103,7 @@ void ofApp::draw(){
     ofSetColor(255, 255, 255);
 
     //check performance
-    if (performance > 6) {
+    if (performance > 7) {
         performanceImg = greatPerformance;
     }
     else if (performance > 3) {
@@ -115,32 +115,34 @@ void ofApp::draw(){
 
     //draw background first
     backgroundImg.draw(0, 0);
-    performanceImg.draw(300, 300);
+    performanceImg.draw(0, 0);
 
     string fpsStr = "FPS: " + ofToString(ofGetFrameRate(), 2);
     ofDrawBitmapString(fpsStr, 900, 50);
 
     string musicPos = "Track Time: " + ofToString(currentMS, 2);
-    ofDrawBitmapString(musicPos, 50, 50);
+    ofDrawBitmapString(musicPos, 50, 25);
 
     string score = "Total Score: " + ofToString(totalScore, 2);
-    ofDrawBitmapString(score, 50, 75);
+    ofDrawBitmapString(score, 50, 50);
 
-    string beatRateString = "Beat Rating: " + beatRating + "!";
-    ofDrawBitmapString(beatRateString, 50, 125);
+    string beatRateString = "Beat (F) Rating: " + beatRating + "!";
+    ofDrawBitmapString(beatRateString, 200, 25);
 
-    string snareRateString = "Snare Rating: " + snareRating + "!";
-    ofDrawBitmapString(snareRateString, 50, 150);
+    string snareRateString = "Snare (J) Rating: " + snareRating + "!";
+    ofDrawBitmapString(snareRateString, 200, 50);
 
     //draw notes based on currentMS and beat/snareMS[beat/snare index]
     ofSetColor(255, 0, 0);
     ofFill();
 
+    /*
     //draw frame. notes move from right to left.
     ofDrawCircle(25, 500, 5); //top left
     ofDrawCircle(999, 500, 5); //top right
     ofDrawCircle(25, 743, 5); //bottom left
     ofDrawCircle(999, 743, 5); //bottom right
+    */
 
     //X Bounds: 50 - 974 -> translate directly to MS?
     //Y Bounds: 100 - 718
@@ -157,11 +159,11 @@ void ofApp::draw(){
     ofSetColor(255, 255, 255);
     //draw rating
     if (beatHit) {
-        beatRatingImg.draw(450, 300);
+        beatRatingImg.draw(250, 300);
     }
 
     if (snareHit) {
-        snareRatingImg.draw(450, 350);
+        snareRatingImg.draw(250, 350);
     }
     
 
@@ -398,7 +400,7 @@ void ofApp::keyPressed(int key){
                 snareScore = 50;
                 snareRatingImg = perfectImg;
                 snareHitTime = snareMS[snareIndex] - currentMS;
-                performance += 1;
+                performance += 2;
                 performanceCounter++;
             }
             //Late
